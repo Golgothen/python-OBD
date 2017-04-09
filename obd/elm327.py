@@ -37,7 +37,7 @@ import logging
 from .protocols import *
 from .utils import OBDStatus
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('root')
 
 
 class ELM327:
@@ -116,6 +116,7 @@ class ELM327:
         self.__status   = OBDStatus.NOT_CONNECTED
         self.__port     = None
         self.__protocol = UnknownProtocol([])
+        self.__nodatacount = 0
 
 
         # ------------- open port -------------
@@ -340,6 +341,9 @@ class ELM327:
     def status(self):
         return self.__status
 
+    def set_status(self,status):
+        self.__status=status
+        #logger.debug("Set status to " + self.__status)
 
     def ecus(self):
         return self.__protocol.ecu_map.values()
@@ -453,6 +457,15 @@ class ELM327:
 
         # log, and remove the "bytearray(   ...   )" part
         logger.debug("read: " + repr(buffer)[10:-1])
+        if repr(buffer)[12:19]=='NO DATA':
+            self.__nodatacount+=1
+            logger.debug("NoData count: " + str(self.__nodatacount))
+            if self.__nodatacount > 10:
+                self.set_status(OBDStatus.ELM_CONNECTED)
+        else:
+            self.__nodatacount = 0
+        if repr(buffer)[12:21]=='CAN ERROR':
+            self.set_status(OBDStatus.ELM_CONNECTED)
 
         # clean out any null characters
         buffer = re.sub(b"\x00", b"", buffer)

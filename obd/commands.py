@@ -36,7 +36,7 @@ from .decoders import *
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('root')
 
 
 
@@ -86,7 +86,7 @@ __mode1__ = [
 
     #                      name                             description                    cmd  bytes       decoder           ECU       fast
     OBDCommand("PIDS_B"                     , "Supported PIDs [21-40]"                  , b"0120", 6, pid,                   ECU.ENGINE, True),
-    OBDCommand("DISTANCE_W_MIL"             , "Distance Traveled with MIL on"           , b"0121", 4, uas(0x25),              ECU.ENGINE, True),
+    OBDCommand("DISTANCE_W_MIL"             , "Distance Traveled with MIL on"           , b"0121", 4, uas(0x25),             ECU.ENGINE, True),
     OBDCommand("FUEL_RAIL_PRESSURE_VAC"     , "Fuel Rail Pressure (relative to vacuum)" , b"0122", 4, uas(0x19),             ECU.ENGINE, True),
     OBDCommand("FUEL_RAIL_PRESSURE_DIRECT"  , "Fuel Rail Pressure (direct inject)"      , b"0123", 4, uas(0x1B),             ECU.ENGINE, True),
     OBDCommand("O2_S1_WR_VOLTAGE"           , "02 Sensor 1 WR Lambda Voltage"           , b"0124", 6, sensor_voltage_big,    ECU.ENGINE, True),
@@ -102,7 +102,7 @@ __mode1__ = [
     OBDCommand("EVAPORATIVE_PURGE"          , "Commanded Evaporative Purge"             , b"012E", 3, percent,               ECU.ENGINE, True),
     OBDCommand("FUEL_LEVEL"                 , "Fuel Level Input"                        , b"012F", 3, percent,               ECU.ENGINE, True),
     OBDCommand("WARMUPS_SINCE_DTC_CLEAR"    , "Number of warm-ups since codes cleared"  , b"0130", 3, uas(0x01),             ECU.ENGINE, True),
-    OBDCommand("DISTANCE_SINCE_DTC_CLEAR"   , "Distance traveled since codes cleared"   , b"0131", 4, uas(0x25),              ECU.ENGINE, True),
+    OBDCommand("DISTANCE_SINCE_DTC_CLEAR"   , "Distance traveled since codes cleared"   , b"0131", 4, uas(0x25),             ECU.ENGINE, True),
     OBDCommand("EVAP_VAPOR_PRESSURE"        , "Evaporative system vapor pressure"       , b"0132", 4, evap_pressure,         ECU.ENGINE, True),
     OBDCommand("BAROMETRIC_PRESSURE"        , "Barometric Pressure"                     , b"0133", 3, pressure,              ECU.ENGINE, True),
     OBDCommand("O2_S1_WR_CURRENT"           , "02 Sensor 1 WR Lambda Current"           , b"0134", 6, current_centered,      ECU.ENGINE, True),
@@ -151,6 +151,40 @@ __mode1__ = [
     OBDCommand("FUEL_INJECT_TIMING"         , "Fuel injection timing"                   , b"015D", 4, inject_timing,         ECU.ENGINE, True),
     OBDCommand("FUEL_RATE"                  , "Engine fuel rate"                        , b"015E", 4, fuel_rate,             ECU.ENGINE, True),
     OBDCommand("EMISSION_REQ"               , "Designed emission requirements"          , b"015F", 3, drop,                  ECU.ENGINE, True),
+
+    #                      name                             description                    cmd  bytes       decoder           ECU       fast
+    OBDCommand("PIDS_D"                     , "Supported PIDs [61-80]"                  , b"0160", 6, pid,                   ECU.ENGINE, True),
+    OBDCommand("DEMAND_ENGINE_TORQUE"       , "Drivers demand engine - percent torque"  , b"0161", 3, percent_centered_125,  ECU.ENGINE, True),
+    OBDCommand("ACTUAL_ENGINE_TORQUE"       , "Actual engine - percent torque"          , b"0162", 3, percent_centered_125,  ECU.ENGINE, True),
+    OBDCommand("ENGINE_REFERENCE_TORQUE"    , "Engine reference torque"                 , b"0163", 4, engine_torque,         ECU.ENGINE, True),
+    OBDCommand("ENGINE_TORQUE_DATA"         , "Engine percent torque data"              , b"0164", 7, drop,                  ECU.ENGINE, True), # returns 5 percent_centered_125 values
+    OBDCommand("AUX_INPUT_OUTPUT_SUPPORTED" , "Auxiliary input / output supported"      , b"0165", 4, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("MASS_AIR_FLOW_SENSOR"       , "Mass Air Flow Sensor"                    , b"0166", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("COOLANT_TEMP_2"             , "Engine Coolant Temperature"              , b"0167", 5, drop,                  ECU.ENGINE, True), # todo: decode this  
+    OBDCommand("INTAKE_AIR_TEMERATURE"      , "Intake air temerature sensor"            , b"0168", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("COMMANDED_EGR_AND_ERROR"    , "Commanded EGR and EGR error"             , b"0169", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("DIESEL_INTAKE_AIRFLOW"      , "Commanded Diesel airflow and relative airflow", b"016A", 7, drop,             ECU.ENGINE, True), # todo: decode this
+    OBDCommand("RECIRCULATION_TEMP"         , "Exhaust gas recirculation temperature"   , b"016B", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("THROTTLE_ACTUATOR_POSITION" , "Commanded throttle actuator control and position", b"016C", 7, drop,          ECU.ENGINE, True), # todo: decode this
+    OBDCommand("FUEL_PRESSURE_CONTROL"      , "Fuel pressure control system"            , b"016D", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("INJECTOR_PRESSURE_CONTROL"  , "Injector pressure control system"        , b"016E", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("TURBO_INLET_PRESSURE"       , "Turbocharger compressor inlet pressure"  , b"016F", 5, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("BOOST_PRESSURE_CONTROL"     , "Boost pressure control"                  , b"0170", 11, drop,                 ECU.ENGINE, True), # todo: decode this
+    OBDCommand("VGT_CONTROL"                , "Variable Geometry Turbo Control"         , b"0171", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("WASTEGATE_CONTROL"          , "Wastegate control"                       , b"0172", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("EXHAUST_PRESSURE"           , "Exhaust pressure"                        , b"0173", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("TURBO_RPM"                  , "Turbocharger RPM"                        , b"0174", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("TURBO_TEMP_A"               , "Turbocharger Temperature"                , b"0175", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("TURBO_TEMP_B"               , "Turbocharger Temperature"                , b"0176", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("CACT"                       , "Charge air cooler temperature"           , b"0177", 7, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("EGT_B1"                     , "Exhaust gas temerature Bank 1"           , b"0178", 11, drop,                 ECU.ENGINE, True), # todo: decode this
+    OBDCommand("EGT_B2"                     , "Exhaust gas temerature Bank 2"           , b"0179", 11, drop,                 ECU.ENGINE, True), # todo: decode this
+    OBDCommand("DPF_A"                      , "Diesel Particulate Filter"               , b"017A", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("DPF_B"                      , "Diesel Particulate Filter"               , b"017B", 9, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("DPF_TEMP"                   , "Diesel Particulate Filter temperature"   , b"017C", 11, drop,                 ECU.ENGINE, True), # todo: decode this
+    OBDCommand("NOX_NTE"                    , "NOx Not To Exceed control area status"   , b"017D", 3, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("PM_NTE"                     , "PM Not To Exceed control area status"    , b"017E", 3, drop,                  ECU.ENGINE, True), # todo: decode this
+    OBDCommand("ENGINE_RUNTIME"             , "Engine Run Time"                         , b"017F", 15, drop,                 ECU.ENGINE, True), # todo: decode this
 ]
 
 

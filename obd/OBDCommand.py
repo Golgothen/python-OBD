@@ -36,7 +36,7 @@ from .OBDResponse import OBDResponse
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('root')
 
 
 class OBDCommand():
@@ -77,7 +77,7 @@ class OBDCommand():
     def pid(self):
         if len(self.command) > 2 and \
            isHex(self.command.decode()):
-            return int(self.command[2:], 16)
+            return int(self.command[2:],16)
         else:
             return None
 

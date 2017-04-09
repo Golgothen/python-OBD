@@ -39,7 +39,7 @@ from .commands import commands
 from .OBDResponse import OBDResponse
 from .utils import scan_serial, OBDStatus
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('root')
 
 
 class OBD(object):
@@ -57,7 +57,8 @@ class OBD(object):
 
         logger.info("======================= python-OBD (v%s) =======================" % __version__)
         self.__connect(portstr, baudrate, protocol) # initialize by connecting and loading sensors
-        self.__load_commands()            # try to load the car's supported commands
+        if not self.__load_commands():            # try to load the car's supported commands
+            self.close()
         logger.info("===================================================================")
 
 
@@ -115,7 +116,7 @@ class OBD(object):
 
             if response.is_null():
                 logger.info("No valid data for PID listing command: %s" % get)
-                continue
+                return False
 
             # loop through PIDs bitarray
             for i, bit in enumerate(response.value):
@@ -132,7 +133,7 @@ class OBD(object):
                         self.supported_commands.add(commands[2][pid])
 
         logger.info("finished querying with %d commands supported" % len(self.supported_commands))
-
+        return True
 
     def close(self):
         """
@@ -251,7 +252,7 @@ class OBD(object):
             return OBDResponse()
 
         # send command and retrieve message
-        logger.info("Sending command: %s" % str(cmd))
+        logger.debug("Sending command: %s" % str(cmd))
         cmd_string = self.__build_command_string(cmd)
         messages = self.interface.send_and_parse(cmd_string)
 

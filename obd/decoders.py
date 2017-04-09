@@ -39,7 +39,7 @@ from .UnitsAndScaling import Unit, UAS_IDS
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('root')
 
 '''
 All decoders take the form:
@@ -106,12 +106,28 @@ def percent_centered(messages):
     v = (v - 128) * 100.0 / 128.0
     return v * Unit.percent
 
+# -125 to 125 %
+def percent_centered_125(messages):
+    d = messages[0].data[2:]
+    v = d[0]
+    v = (v - 128) * 100.0 / 125.0
+    return v * Unit.percent
+
 # -40 to 215 C
 def temp(messages):
     d = messages[0].data[2:]
     v = bytes_to_int(d)
     v = v - 40
     return Unit.Quantity(v, Unit.celsius) # non-multiplicative unit
+
+# 0 to 65535 Nm
+def engine_torque(messages):
+    # decode the twos complement
+    d = messages[0].data[2:]
+    a = twos_comp(d[0], 8)
+    b = twos_comp(d[1], 8)
+    v = ((a * 256.0) + b)
+    return v
 
 # -128 to 128 mA
 def current_centered(messages):

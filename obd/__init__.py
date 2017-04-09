@@ -49,9 +49,9 @@ from .UnitsAndScaling import Unit
 
 import logging
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
+logger = logging.getLogger('root')
+#logger.setLevel(logging.WARNING)
 
-console_handler = logging.StreamHandler() # sends output to stderr
-console_handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
-logger.addHandler(console_handler)
+#console_handler = logging.StreamHandler() # sends output to stderr
+#console_handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s - [%(module)s.%(funcName)s:%(lineno)s] %(message)s"))
+#logger.addHandler(console_handler)
